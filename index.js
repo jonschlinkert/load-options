@@ -27,7 +27,7 @@ var dir = function(base) {
 /**
  * ## .loadOptions(options)
  *
- * Load options from an object or file.
+ * Load default options, or define an object or `{json,yml}` file to extend the defaults.
  *
  * **Example:**
  *
@@ -37,7 +37,8 @@ var dir = function(base) {
  * var assemble = require('assemble');
  * var opts = require('load-options');
  *
- * assemble.options(opts());
+ * // Override default layout with `blog` layout
+ * assemble.options(opts({layout: 'blog'}));
  * assemble.task('site', function() {
  *   assemble.src(opts.src)
  *     .dest(opts.dest);
