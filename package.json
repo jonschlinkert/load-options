@@ -1,7 +1,7 @@
 {
   "name": "load-options",
-  "description": "Use glob patterns to resolve the filepath to templates in local node_modules.",
-  "version": "0.1.0",
+  "description": "Load Assemble options from a config file, object, glob patterns, or any combination of those. Fallback on defaults if options aren't defined, or you can override or extend the defaults.",
+  "version": "0.1.1",
   "homepage": "https://github.com/jonschlinkert/load-options",
   "author": {
     "name": "Jon Schlinkert",
@@ -37,17 +37,18 @@
     "test": "mocha -R spec"
   },
   "devDependencies": {
-    "layout.hbs": "~0.1.0",
-    "verb": "~0.2.6",
     "chai": "~1.9.1",
-    "mocha": "*"
+    "handlebars-helper-not": "^0.1.0",
+    "handlebars-helper-pkg": "^0.2.0",
+    "handlebars-helper-slugify": "^0.3.2",
+    "mocha": "*",
+    "verb": "~0.2.6",
+    "verb-tag-jscomments": "^0.1.2"
   },
   "dependencies": {
-    "globule": "^0.2.0",
-    "load-pkg": "^0.1.0",
+    "cwd": "^0.3.3",
     "lodash": "^2.4.1",
     "plasma": "^0.3.0",
-    "read-data": "^0.1.1",
-    "resolve": "^0.7.1"
+    "resolve-dep": "^0.3.4"
   }
 }

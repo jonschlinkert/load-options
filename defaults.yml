@@ -12,7 +12,7 @@ engine:       handlebars
 ext:          .html
 
 # Data
-data:         ['data/*.{json,yml,yaml}']
+data:         ['data/*.{json,yml}']
 plasma:
 
 # Templates
@@ -27,5 +27,5 @@ partials:     ['<%= templates %>/{partials,includes}/*.hbs']
 # extensions: defined in `index.js`
 plugins:      ['<%= extensions %>/plugins/*.js']
 middleware:   ['<%= extensions %>/middleware/*.js']
-helpers:      ['<%= extensions %>/helpers/*.js']
+helpers:      ['<%= extensions %>/helpers/*.js', 'handlebars-helper-*']
 mixins:       ['<%= extensions %>/mixins/*.js']
