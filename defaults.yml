@@ -1,0 +1,30 @@
+# =============================================
+# ASSEMBLE DEFAULTS
+# =============================================
+
+# Destination
+dest:       _gh_pages
+assets:     <%= dest %>/assets
+
+# Variables
+flatten:    true
+engine:     handlebars
+ext:        .html
+
+# Data
+data:       ['data/*.{json,yml,yaml}']
+plasma:
+
+# Templates
+layoutdir:  <%= templates %>/layouts
+layout:     default
+layoutext:  .hbs
+
+pages:      ['<%= templates %>/pages/*.hbs']
+partials:   ['<%= templates %>/{partials,includes}/*.hbs']
+
+# Extensions
+plugins:    ['<%= extensions %>/plugins/*.js']
+middleware: ['<%= extensions %>/middleware/*.js']
+helpers:    ['<%= extensions %>/helpers/*.js']
+mixins:     ['<%= extensions %>/mixins/*.js']
