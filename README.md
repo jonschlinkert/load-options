@@ -19,7 +19,14 @@ Load options from an object or file.
 Use the defaults:
 
 ```js
-var options = require('load-options')();
+var assemble = require('assemble');
+var opts = require('load-options');
+
+assemble.options(opts());
+assemble.task('site', function() {
+  assemble.src(opts.src)
+    .dest(opts.dest);
+});
 ```
 
 * `options` {Object}:  

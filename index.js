@@ -1,4 +1,4 @@
-/**
+/*!
  * load-options
  * https://github.com/jonschlinkert/load-options
  *
@@ -34,7 +34,14 @@ var dir = function(base) {
  * Use the defaults:
  *
  * ```js
- * var options = require('load-options')();
+ * var assemble = require('assemble');
+ * var opts = require('load-options');
+ *
+ * assemble.options(opts());
+ * assemble.task('site', function() {
+ *   assemble.src(opts.src)
+ *     .dest(opts.dest);
+ * });
  * ```
  *
  * @method  exports
@@ -74,6 +81,7 @@ module.exports = function(options) {
   opts.plugins = resolve(opts.plugins);
   opts.middleware = resolve(opts.middleware);
   opts.mixins = resolve(opts.mixins);
+  opts.src = opts.src || opts.pages;
 
   return opts;
 };
