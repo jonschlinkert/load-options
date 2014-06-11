@@ -13,16 +13,19 @@ var resolve = require('resolve-dep');
 var plasma = require('plasma');
 var _ = require('lodash');
 
-
 var defaults = path.join(__dirname, 'defaults.yml');
 
+module.exports = function(options) {
+  options = plasma(options);
+  defaults = plasma(defaults);
 
-var loadOpts = module.exports = function(options) {
-  var settings = _.extend({}, plasma(defaults), {
+  var settings = _.extend({}, defaults, {
     dest: '_gh_pages',
     extensions: 'extensions',
     templates: 'templates'
-  }, plasma(options));
+  }, options);
+
+  settings._default = defaults;
 
   // Defaults
   var opts = plasma.process(settings);
@@ -44,5 +47,6 @@ var loadOpts = module.exports = function(options) {
   opts.plugins = resolve(opts.plugins);
   opts.middleware = resolve(opts.middleware);
   opts.mixins = resolve(opts.mixins);
+
   return opts;
 };
