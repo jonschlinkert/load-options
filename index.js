@@ -11,15 +11,15 @@
 var path = require('path');
 var resolve = require('resolve-dep');
 var plasma = require('plasma');
+var cwdFn = require('cwd');
 var _ = require('lodash');
-var root = require('cwd');
+
 
 var defaults = path.join(__dirname, 'defaults.yml');
-
-var dir = function(base) {
-  base = base || root();
+var dir = function(cwd) {
+  cwd = cwd || cwdFn();
   return function(filepath) {
-    return path.join(base, filepath || '');
+    return path.join(cwd, filepath || '');
   }
 };
 
@@ -64,25 +64,28 @@ module.exports = function(options) {
 
   // Defaults
   var opts = plasma.process(settings);
+  opts.cwd = cwd().replace(/[\\\/]/g, '/');
 
   // Data
   opts.plasma = plasma(opts.plasma);
   var data = (opts.data == null) ? {} : plasma({
     namespace: ':basename',
-    src: opts.data
-  });
+    patterns: opts.data
+  }, {cwd: opts.cwd});
   opts.data = _.extend({}, opts.plasma, data);
 
   // Templates
-  opts.partials = resolve(opts.partials);
-  opts.pages = resolve(opts.pages);
+  opts.partials = resolve(opts.partials, {cwd: opts.cwd});
+  opts.pages    = resolve(opts.pages, {cwd: opts.cwd});
+  opts.layouts  = resolve(opts.layouts, {cwd: opts.cwd});
 
   // Extensions
-  opts.helpers = resolve(opts.helpers);
-  opts.plugins = resolve(opts.plugins);
-  opts.middleware = resolve(opts.middleware);
-  opts.mixins = resolve(opts.mixins);
   opts.src = opts.src || opts.pages;
+  opts.helpers    = resolve(opts.helpers, {cwd: opts.cwd});
+  opts.plugins    = resolve(opts.plugins, {cwd: opts.cwd});
+  opts.middleware = resolve(opts.middleware, {cwd: opts.cwd});
+  opts.mixins     = resolve(opts.mixins, {cwd: opts.cwd});
 
+  _.extend(this, opts);
   return opts;
 };

@@ -25,7 +25,7 @@ describe('when a cwd is defined:', function () {
 });
 
 // this is failing, plasma needs to be fixed.
-xdescribe('when a src is defined:', function () {
+describe('when a src is defined:', function () {
   it('should use src instead of `pages`.', function () {
     var opts = loadOptions({src: ['test/fixtures/*.hbs']});
     expect(opts.layout).to.eql('default');

@@ -1,7 +1,7 @@
 {
   "name": "load-options",
   "description": "Load Assemble options from a config file, object, glob patterns, or any combination of those. Fallback on defaults if options aren't defined, or you can override or extend the defaults.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "homepage": "https://github.com/jonschlinkert/load-options",
   "author": {
     "name": "Jon Schlinkert",
@@ -48,7 +48,7 @@
   "dependencies": {
     "cwd": "^0.3.3",
     "lodash": "^2.4.1",
-    "plasma": "^0.3.0",
+    "plasma": "^0.4.0",
     "resolve-dep": "^0.3.4"
   }
 }

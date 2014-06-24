@@ -20,6 +20,7 @@ plasma:
 layoutdir:    <%= templates %>/layouts
 layout:       default
 layoutext:    .hbs
+layouts:      ['<%= layoutdir %>/*.hbs']
 pages:        ['<%= templates %>/pages/*.hbs']
 partials:     ['<%= templates %>/{partials,includes}/*.hbs']
 
