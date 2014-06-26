@@ -11,13 +11,13 @@
 var path = require('path');
 var resolve = require('resolve-dep');
 var plasma = require('plasma');
-var rootFn = require('find-root');
+var cwdFn = require('cwd');
 var extend = require('xtend');
 
 
 var defaults = path.join(__dirname, 'defaults.yml');
 var dir = function(cwd) {
-  cwd = cwd || rootFn();
+  cwd = cwd || cwdFn();
   return function(filepath) {
     return path.join(cwd, filepath || '');
   };
