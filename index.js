@@ -11,16 +11,16 @@
 var path = require('path');
 var resolve = require('resolve-dep');
 var plasma = require('plasma');
-var cwdFn = require('cwd');
-var _ = require('lodash');
+var rootFn = require('find-root');
+var extend = require('xtend');
 
 
 var defaults = path.join(__dirname, 'defaults.yml');
 var dir = function(cwd) {
-  cwd = cwd || cwdFn();
+  cwd = cwd || rootFn();
   return function(filepath) {
     return path.join(cwd, filepath || '');
-  }
+  };
 };
 
 
@@ -37,11 +37,11 @@ var dir = function(cwd) {
  * var assemble = require('assemble');
  * var opts = require('load-options');
  *
- * // Override default layout with `blog` layout
+ * // Override `default` layout with `blog` layout
  * assemble.options(opts({layout: 'blog'}));
  * assemble.task('site', function() {
  *   assemble.src(opts.src)
- *     .dest(opts.dest);
+ *     .pipe(assemble.dest(opts.dest));
  * });
  * ```
  *
@@ -55,7 +55,7 @@ module.exports = function(options) {
   defaults = plasma(defaults);
   var cwd = dir(options.cwd);
 
-  var settings = _.extend({}, defaults, {
+  var settings = extend({}, defaults, {
     dest: cwd('_gh_pages'),
     extensions: cwd('extensions'),
     templates: cwd('templates'),
@@ -72,20 +72,21 @@ module.exports = function(options) {
     namespace: ':basename',
     patterns: opts.data
   }, {cwd: opts.cwd});
-  opts.data = _.extend({}, opts.plasma, data);
+  opts.data = extend({}, opts.plasma, data);
 
   // Templates
   opts.partials = resolve(opts.partials, {cwd: opts.cwd});
-  opts.pages    = resolve(opts.pages, {cwd: opts.cwd});
+  opts.pages = resolve(opts.pages, {cwd: opts.cwd});
   opts.layouts  = resolve(opts.layouts, {cwd: opts.cwd});
 
   // Extensions
   opts.src = opts.src || opts.pages;
-  opts.helpers    = resolve(opts.helpers, {cwd: opts.cwd});
-  opts.plugins    = resolve(opts.plugins, {cwd: opts.cwd});
-  opts.middleware = resolve(opts.middleware, {cwd: opts.cwd});
-  opts.mixins     = resolve(opts.mixins, {cwd: opts.cwd});
 
-  _.extend(this, opts);
+  opts.helpers = resolve(opts.helpers, {cwd: opts.cwd});
+  opts.plugins = resolve(opts.plugins, {cwd: opts.cwd});
+  opts.middleware = resolve(opts.middleware, {cwd: opts.cwd});
+  opts.mixins = resolve(opts.mixins, {cwd: opts.cwd});
+
+  extend(this, opts);
   return opts;
 };
