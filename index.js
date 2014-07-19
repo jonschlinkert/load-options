@@ -9,25 +9,16 @@
 'use strict';
 
 var path = require('path');
-var resolve = require('resolve-dep');
-var plasma = require('plasma');
-var cwdFn = require('cwd');
+var cwd = require('cwd');
 var extend = require('xtend');
-
-
-var defaults = path.join(__dirname, 'defaults.yml');
-var dir = function(cwd) {
-  cwd = cwd || cwdFn();
-  return function(filepath) {
-    return path.join(cwd, filepath || '');
-  };
-};
+var resolve = require('resolve-dep');
+var normalizePath = require('normalize-path');
+var plasma = require('plasma');
 
 
 /**
- * ## .loadOptions(options)
- *
- * Load default options, or define an object or `{json,yml}` file to extend the defaults.
+ * Load default options, define an object, pass JSON/YAML file(s) or
+ * glob pattern(s) to extend the defaults.
  *
  * **Example:**
  *
@@ -50,42 +41,60 @@ var dir = function(cwd) {
  * @return  {Object}
  */
 
-module.exports = function(options) {
-  options = plasma(options);
-  defaults = plasma(defaults);
-  var cwd = dir(options.cwd);
+// var arr = ['pages',]
 
-  var settings = extend({}, defaults, {
-    dest: cwd('_gh_pages'),
-    extensions: cwd('extensions'),
-    templates: cwd('templates'),
-    _default: defaults
+module.exports = function loadOptions() {
+  var args = [].slice.call(arguments);
+
+  // Read and expand the user-defined options with plasma
+  var options = plasma.apply(plasma, args);
+  options.cwd = normalizePath(options.cwd || process.cwd());
+  options.srcBase = options.cwd;
+
+  // Read and expand the default options with plasma
+  var defaults = plasma(path.join(__dirname, 'defaults.yml'));
+
+  // Merge defaults and user-defined options, and resolve
+  // template strings to their respective config values.
+  var opts = extend({}, defaults, {
+    dest: cwd(options.cwd, '_gh_pages'),
+    extensions: cwd(options.cwd, 'extensions'),
+    templates: cwd(options.cwd, 'templates'),
+
+    // store defaults so they can be accessed with templates.
+    _default: defaults,
   }, options);
 
-  // Defaults
-  var opts = plasma.process(settings);
-  opts.cwd = cwd().replace(/[\\\/]/g, '/');
+  opts = plasma.process(opts);
 
-  // Data
+  // If `options.plasma` was defined, read it with plasma
   opts.plasma = plasma(opts.plasma);
-  var data = (opts.data == null) ? {} : plasma({
-    namespace: ':basename',
-    patterns: opts.data
-  }, {cwd: opts.cwd});
+
+  // Resolve data
+  var data = {};
+  if (opts.data) {
+    data = plasma({namespace: ':basename', patterns: opts.data}, {cwd: opts.cwd});
+  }
   opts.data = extend({}, opts.plasma, data);
 
-  // Templates
-  opts.partials = resolve(opts.partials, {cwd: opts.cwd});
-  opts.pages = resolve(opts.pages, {cwd: opts.cwd});
-  opts.layouts  = resolve(opts.layouts, {cwd: opts.cwd});
+  try {
+    // Resolve templates
+    opts.partials   = resolve(opts.partials, {cwd: opts.cwd});
+    opts.pages      = resolve(opts.pages, {cwd: opts.cwd});
+    opts.layouts    = resolve(opts.layouts, {cwd: opts.cwd});
 
-  // Extensions
-  opts.src = opts.src || opts.pages;
+    opts.layoutdir  = resolve(opts.layoutdir, {cwd: opts.cwd})[0];
+    opts.layoutext  = opts.layoutext;
+    opts.layout     = opts.layout;
 
-  opts.helpers = resolve(opts.helpers, {cwd: opts.cwd});
-  opts.plugins = resolve(opts.plugins, {cwd: opts.cwd});
-  opts.middleware = resolve(opts.middleware, {cwd: opts.cwd});
-  opts.mixins = resolve(opts.mixins, {cwd: opts.cwd});
+    // Resolve extensions
+    opts.helpers    = resolve(opts.helpers, {cwd: opts.cwd});
+    opts.plugins    = resolve(opts.plugins, {cwd: opts.cwd});
+    opts.middleware = resolve(opts.middleware, {cwd: opts.cwd});
+    opts.mixins     = resolve(opts.mixins, {cwd: opts.cwd});
+  } catch (err) {
+    throw new Error('load-options:', err);
+  }
 
   extend(this, opts);
   return opts;

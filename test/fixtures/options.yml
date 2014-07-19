@@ -1,0 +1,29 @@
+# =============================================
+# CUSTOM SETTINGS
+# =============================================
+
+# Destination
+dest:         _gh_pages
+assets:       <%= dest %>/assets
+
+# Variables
+flatten:      true
+engine:       handlebars
+ext:          .html
+
+# Data
+data:         ['test/fixtures/data/*.{json,yml}']
+
+# Templates
+templates:    test/fixtures/templates
+layout:       foo
+layoutext:    .hbs
+pages:        ['<%= templates %>/pages/*.hbs']
+partials:     ['<%= templates %>/partials/*.hbs', 'button.hbs']
+
+# Extensions
+extensions:   test/fixtures/extensions
+plugins:      ['<%= extensions %>/plugins/*.js']
+middleware:   []
+helpers:      []
+mixins:       ['<%= _default.mixins %>', '<%= extensions %>/mixins/*.js']
